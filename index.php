@@ -1,4 +1,50 @@
 <?php
+    $debug = false;
+    $hoursPerWorkday = 3.5;
+    $moneyPerHour = 10;
+
+
+    $holidays = [
+        "2019-10-11",
+        "2019-10-14",
+        "2019-11-15",
+        "2019-12-23",
+        "2019-12-24",
+        "2019-12-25",
+        "2019-12-26",
+        "2019-12-27",
+        "2019-12-28",
+        "2019-12-29",
+        "2019-12-30",
+        "2019-12-31",
+        "2020-01-01",
+        "2020-01-02",
+        "2020-01-03",
+        "2020-01-24",
+        "2020-02-14",
+        "2020-02-17",
+        "2020-03-16",
+        "2020-03-17",
+        "2020-03-18",
+        "2020-03-19",
+        "2020-03-20",
+        "2020-04-10",
+        "2020-04-13",
+        "2020-04-24",
+        "2020-05-18",
+        "2020-06-05"
+    ];
+
+    date_default_timezone_set("America/Toronto");
+    $now = date("Y-m-d");
+    $first_day_of_school = "2019-09-03";
+    $last_day_of_school  = "2020-06-25";
+
+    function todayIsHoliday(){
+        global $now, $holidays;
+        return in_array($now, $holidays);
+    }
+
     // function from: https://stackoverflow.com/questions/336127/calculate-business-days
     function getWorkingDays($startDate,$endDate,$holidays){
         // do strtotime calculations just once
@@ -7,7 +53,7 @@
 
 
         //The total number of days between the two dates. We compute the no. of seconds and divide it to 60*60*24
-        //We add one to inlude both dates in the interval.
+        //We add one to include both dates in the interval.
         $days = ($endDate - $startDate) / 86400 + 1;
 
         $no_full_weeks = floor($days / 7);
@@ -60,46 +106,78 @@
                 $workingDays--;
         }
 
+        // If is not the weekend or a holiday and it is before your shift starts.. add a day back in
+        if ($the_last_day_of_week < 6 && !todayIsHoliday() && date('H') < 15){
+            $workingDays++;
+        }
+
         return $workingDays;
     }
 
     function getMoneyEarned($currentDate,$startDate,$holidays){
+        global $hoursPerWorkday,$moneyPerHour,$debug;
+
+        $currentDate= strtotime($currentDate);
+        $startDate = strtotime($startDate);
+        $days = ($currentDate - $startDate) / 86400 + 1;
+
+        $no_full_weeks = floor($days / 7);
+        $no_remaining_days = fmod($days, 7);
+
+        //It will return 1 if it's Monday,.. ,7 for Sunday
+        $the_first_day_of_week = date("N", $startDate);
+        $the_last_day_of_week = date("N", $currentDate);
+
+        if($debug) {
+            echo "$ First Day of the Week:" . $the_first_day_of_week . "<br />";
+            echo "$ The Last Day of the Week:" . $the_last_day_of_week . "<br />";
+        }
+
+
+        if ($the_first_day_of_week <= $the_last_day_of_week) {
+            if ($the_first_day_of_week <= 6 && 6 <= $the_last_day_of_week) $no_remaining_days--;
+            if ($the_first_day_of_week <= 7 && 7 <= $the_last_day_of_week) $no_remaining_days--;
+        }
+        else {
+            if ($the_first_day_of_week == 7) {
+                $no_remaining_days--;
+                if ($the_last_day_of_week == 6) {
+                    $no_remaining_days--;
+                }
+            }
+            else {
+                $no_remaining_days -= 2;
+            }
+        }
+
+        $workingDays = $no_full_weeks * 5;
+        if ($no_remaining_days > 0 )
+        {
+            $workingDays += $no_remaining_days;
+        }
+
+        //We subtract the holidays
+        foreach($holidays as $holiday){
+            $time_stamp=strtotime($holiday);
+            //If the holiday doesn't fall in weekend
+            if ($startDate <= $time_stamp && $time_stamp <= $currentDate && date("N",$time_stamp) != 6 && date("N",$time_stamp) != 7)
+                $workingDays--;
+        }
+
+        if ($the_last_day_of_week < 6 && !todayIsHoliday()  && date('H') < 15){
+            $workingDays--;
+        }
+
+
+        if ($debug) {
+            echo "$ Working Days:" . $workingDays . "<br />";
+            echo "$ Hours Per Workday:" . $hoursPerWorkday . "<br />";
+            echo "$ Money Per Hour:" . $moneyPerHour . "<br />";
+        }
+
+        return $workingDays * $hoursPerWorkday * $moneyPerHour;
 
     }
-
-    $holidays = [
-        "2019-10-11",
-        "2019-10-14",
-        "2019-11-15",
-        "2019-12-23",
-        "2019-12-24",
-        "2019-12-25",
-        "2019-12-26",
-        "2019-12-27",
-        "2019-12-28",
-        "2019-12-29",
-        "2019-12-30",
-        "2019-12-31",
-        "2020-01-01",
-        "2020-01-02",
-        "2020-01-03",
-        "2020-01-24",
-        "2020-02-14",
-        "2020-02-17",
-        "2020-03-16",
-        "2020-03-17",
-        "2020-03-18",
-        "2020-03-19",
-        "2020-03-20",
-        "2020-04-10",
-        "2020-04-13",
-        "2020-04-24",
-        "2020-05-18",
-        "2020-06-05"
-    ];
-    $now = date("Y-m-d");
-    $first_day_of_school = "2019-09-03";
-    $last_day_of_school  = "2020-06-25";
 
     $daysLeft = getWorkingDays($now, $last_day_of_school, $holidays);
     $moneyEarned = getMoneyEarned($now, $first_day_of_school, $holidays);
@@ -116,15 +194,18 @@
     <link rel="stylesheet" href="master.css">
 </head>
 <body>
-    <div class="daysleft">
-        <div class="statLabel">Days Left</div>
-        <div class="number"><?php echo $daysLeft ?></div>
+    <div class="wrapper">
+        <div class="daysleft">
+            <div class="statLabel">Days Left</div>
+            <div class="number"><?php echo $daysLeft ?></div>
+        </div>
+
+        <div class="moneyearned">
+            <div class="statLabel">Money Earned</div>
+            <div class="number"><?php echo $moneyEarned ?></div>
+        </div>
     </div>
 
-    <div class="moneyearned">
-        <div class="statLabel">Money Earned</div>
-        <div class="number"><?php echo $moneyEarned ?></div>
-    </div>
 
     <!-- Progress bar here -->
     <!--  S|--------------|M|-------|E -->
