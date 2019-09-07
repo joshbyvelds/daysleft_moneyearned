@@ -179,8 +179,24 @@
 
     }
 
+    function moneyModifer(){
+        $result = 0;
+        $list = [
+
+        ];
+
+        for($i=0; $i < count($list); $i++){
+            $result += $list[$i];
+        }
+
+        return $list;
+    }
+
     $daysLeft = getWorkingDays($now, $last_day_of_school, $holidays);
-    $moneyEarned = getMoneyEarned($now, $first_day_of_school, $holidays);
+    $totalDays = getWorkingDays($first_day_of_school, $last_day_of_school, $holidays);
+    $moneyEarned = getMoneyEarned($now, $first_day_of_school, $holidays) + MoneyModifer();
+
+    $percent = ($totalDays - $daysLeft) / $totalDays;
 ?>
 
 
@@ -195,6 +211,10 @@
 </head>
 <body>
     <div class="wrapper">
+        <div class="left"></div>
+        <div class="right"></div>
+
+
         <div class="daysleft">
             <div class="statLabel">Days Left</div>
             <div class="number"><?php echo $daysLeft ?></div>
@@ -202,8 +222,16 @@
 
         <div class="moneyearned">
             <div class="statLabel">Money Earned</div>
-            <div class="number"><?php echo $moneyEarned ?></div>
+            <div class="number">$<?php echo $moneyEarned ?></div>
         </div>
+
+        <div class="track">
+            <div class="mm_run" style="left:<?php echo (ceil($percent * 358) - 76); ?>px;"></div>
+        </div>
+
+        <footer>
+            Copyright 2019 - Byvelds Multimedia
+        </footer>
     </div>
 
 

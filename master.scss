@@ -1,0 +1,109 @@
+@font-face {
+    font-family: 'Waltograph';
+    src: url('fonts/waltograph.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Waltograph';
+    src: url('fonts/waltographui-bold.woff2') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+}
+
+*{
+    padding: 0;
+    margin: 0;
+}
+
+body{
+    background: url("images/wood-bg.jpg");
+}
+
+div.wrapper{
+    position: relative;
+    max-width: 375px;
+    padding-top: 20px;
+    padding-bottom: 40px;
+    margin: 0 auto;
+    color: white;
+    text-align: center;
+    //background: rgba(255,255,255,0.3);
+}
+
+div.left{
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 95px;
+    height: 120px;
+    background: url("images/left.png");
+    -webkit-background-size: contain;
+    background-size: contain;
+    z-index: 30;
+}
+
+div.right{
+    position: absolute;
+    top: 60px;
+    right: 0;
+    width: 90px;
+    height: 110px;
+    background: url("images/right.png");
+    -webkit-background-size: contain;
+    background-size: contain;
+    z-index: 30;
+}
+
+div.statLabel{
+    padding-bottom: 20px;
+    font-family: 'Waltograph';
+    font-size: 57px;
+}
+
+div.number {
+    font-family: 'Waltograph';
+    font-size: 62px;
+    font-weight: bold;
+    text-shadow: 0 3px 2px rgba(0,0,0,0.7);
+}
+
+div.daysleft{
+
+}
+
+div.moneyearned{
+
+}
+
+div.track{
+    position: relative;
+    width: 375px;
+    height: 223px;
+    margin: 0 auto 10px;
+    background: url("images/track.jpg");
+    overflow: hidden;
+
+    .mm_run{
+        position: absolute;
+        bottom: 20px;
+        left: -100px;
+        width: 109px;
+        height: 123px;
+        background: url("images/run.png");
+    }
+}
+
+footer{
+    box-sizing: border-box;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 10px 20px;
+    background: rgba(255,255,255,0.85);
+    color: black;
+    font-family: 'Waltograph';
+    font-weight: normal;
+    border-radius: 12px 12px 0 0;
+}
