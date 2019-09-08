@@ -1,7 +1,7 @@
 <?php
     $debug = false;
     $hoursPerWorkday = 3.5;
-    $moneyPerHour = 10;
+    $moneyPerHour = 13.60;
 
 
     $holidays = [
@@ -175,7 +175,7 @@
             echo "$ Money Per Hour:" . $moneyPerHour . "<br />";
         }
 
-        return $workingDays * $hoursPerWorkday * $moneyPerHour;
+        return sprintf("%0.2f", round(($workingDays * $hoursPerWorkday * $moneyPerHour) + (moneyModifer() * $moneyPerHour),2));
 
     }
 
@@ -189,12 +189,12 @@
             $result += $list[$i];
         }
 
-        return $list;
+        return $result;
     }
 
     $daysLeft = getWorkingDays($now, $last_day_of_school, $holidays);
     $totalDays = getWorkingDays($first_day_of_school, $last_day_of_school, $holidays);
-    $moneyEarned = getMoneyEarned($now, $first_day_of_school, $holidays) + MoneyModifer();
+    $moneyEarned = getMoneyEarned($now, $first_day_of_school, $holidays);
 
     $percent = ($totalDays - $daysLeft) / $totalDays;
 ?>
