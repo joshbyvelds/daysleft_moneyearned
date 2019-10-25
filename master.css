@@ -31,7 +31,7 @@ div.wrapper {
 
 div.left {
   position: absolute;
-  top: 80px;
+  top: 60px;
   left: 0;
   width: 95px;
   height: 120px;
@@ -43,7 +43,7 @@ div.left {
 
 div.right {
   position: absolute;
-  top: 80px;
+  top: 60px;
   right: 0;
   width: 90px;
   height: 110px;
@@ -64,6 +64,13 @@ div.number {
   font-size: 62px;
   font-weight: bold;
   text-shadow: 0 3px 2px rgba(0, 0, 0, 0.7);
+}
+
+div.payday span {
+  position: relative;
+  top: -30px;
+  color: #0F0;
+  font-size: 30px;
 }
 
 div.track {

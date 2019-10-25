@@ -1,10 +1,17 @@
 <?php
     $debug = false;
     $hoursPerWorkday = 3.5;
-    $moneyPerHour = 13.60;
+    $moneyPerHour = 14.17;
+
+    // Notes:
+    /*
+     * First Paycheck 2019: 26.5 hrs | $378.89
+     *
+     */
 
 
     $holidays = [
+        "2019-09-27",
         "2019-10-11",
         "2019-10-14",
         "2019-11-15",
@@ -39,6 +46,9 @@
     $now = date("Y-m-d");
     $first_day_of_school = "2019-09-03";
     $last_day_of_school  = "2020-06-25";
+    $first_payday  = "2019-09-19";
+    $next_payday = "";
+    $last_payday = "";
 
     function todayIsHoliday(){
         global $now, $holidays;
@@ -170,6 +180,7 @@
 
 
         if ($debug) {
+            echo "# Hours:" . (($workingDays * 3.5) + moneyModifer()) . "<br />";
             echo "$ Working Days:" . $workingDays . "<br />";
             echo "$ Hours Per Workday:" . $hoursPerWorkday . "<br />";
             echo "$ Money Per Hour:" . $moneyPerHour . "<br />";
@@ -182,7 +193,9 @@
     function moneyModifer(){
         $result = 0;
         $list = [
-
+            1,
+            1,
+            -2,
         ];
 
         for($i=0; $i < count($list); $i++){
@@ -192,11 +205,33 @@
         return $result;
     }
 
+    function getNextPayday($now, $first_payday) {
+        $currentDate = strtotime($now);
+        $paydate = strtotime($first_payday);
+
+        $days = ((($currentDate - $paydate) / 86400) % 14) - 1;
+
+        return $days;
+    }
+
+    function getLastPayday($now, $daysUntilPayday) {
+        $currentDate = strtotime($now);
+        $lastPayDayTimestamp = ($currentDate + (($daysUntilPayday + 1) * 86400)) - (22 * 86400);
+        $lastPayDate = date( "Y-m-d", $lastPayDayTimestamp);
+        return $lastPayDate;
+    }
+
     $daysLeft = getWorkingDays($now, $last_day_of_school, $holidays);
     $totalDays = getWorkingDays($first_day_of_school, $last_day_of_school, $holidays);
     $moneyEarned = getMoneyEarned($now, $first_day_of_school, $holidays);
+    $daysUntilPayday = getNextPayday($now, $first_payday);
+    $last_payday = getLastPayday($now, $daysUntilPayday);
+    $moneyEarnedPay = getMoneyEarned($last_payday, $first_day_of_school, $holidays);
+
 
     $percent = ($totalDays - $daysLeft) / $totalDays;
+
+
 ?>
 
 
@@ -223,6 +258,16 @@
         <div class="moneyearned">
             <div class="statLabel">Money Earned</div>
             <div class="number">$<?php echo $moneyEarned ?></div>
+        </div>
+
+        <div class="payday">
+            <div class="statLabel">Days until Payday</div>
+            <div class="number"><?php if($daysUntilPayday === 0){ echo "<span>$$ Payday Today! $$</span>"; }else{ echo $daysUntilPayday; } ?></div>
+        </div>
+
+        <div class="moneyearnedpayday">
+            <div class="statLabel">Money Banked</div>
+            <div class="number">$<?php echo $moneyEarnedPay ?></div>
         </div>
 
         <div class="track">
