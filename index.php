@@ -225,8 +225,13 @@
     $totalDays = getWorkingDays($first_day_of_school, $last_day_of_school, $holidays);
     $moneyEarned = getMoneyEarned($now, $first_day_of_school, $holidays);
     $daysUntilPayday = getNextPayday($now, $first_payday);
+    $next_payday = date( "Y-m-d", strtotime($now) + ($daysUntilPayday * 86400));
     $last_payday = getLastPayday($now, $daysUntilPayday);
     $moneyEarnedPay = getMoneyEarned($last_payday, $first_day_of_school, $holidays);
+    $moneyNextPay = getMoneyEarned(date("Y-m-d", strtotime($next_payday) - (7 * 86400)), date("Y-m-d", strtotime($last_payday)), $holidays);
+
+    echo "T2:" . date("Y-m-d", strtotime($last_payday)) . '<br />';
+    echo "T1:" . date("Y-m-d", strtotime($next_payday) - (7 * 86400)) . '<br />';
 
 
     $percent = ($totalDays - $daysLeft) / $totalDays;
@@ -260,14 +265,19 @@
             <div class="number">$<?php echo $moneyEarned ?></div>
         </div>
 
+        <div class="moneyearnedpayday">
+            <div class="statLabel">Money Banked</div>
+            <div class="number">$<?php echo $moneyEarnedPay ?></div>
+        </div>
+
         <div class="payday">
             <div class="statLabel">Days until Payday</div>
             <div class="number"><?php if($daysUntilPayday === 0){ echo "<span>$$ Payday Today! $$</span>"; }else{ echo $daysUntilPayday; } ?></div>
         </div>
 
         <div class="moneyearnedpayday">
-            <div class="statLabel">Money Banked</div>
-            <div class="number">$<?php echo $moneyEarnedPay ?></div>
+            <div class="statLabel">Money Next Pay</div>
+            <div class="number">$<?php echo $moneyNextPay ?></div>
         </div>
 
         <div class="track">
