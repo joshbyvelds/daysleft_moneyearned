@@ -221,7 +221,7 @@
         return $lastPayDate;
     }
 
-    $daysLeft = getWorkingDays($now, $last_day_of_school, $holidays);
+    $daysLeft = round(getWorkingDays($now, $last_day_of_school, $holidays));
     $totalDays = getWorkingDays($first_day_of_school, $last_day_of_school, $holidays);
     $moneyEarned = getMoneyEarned($now, $first_day_of_school, $holidays);
     $daysUntilPayday = getNextPayday($now, $first_payday);
